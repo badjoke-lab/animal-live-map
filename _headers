@@ -1,0 +1,5 @@
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(self)
+  Content-Security-Policy: default-src 'self'; script-src 'self' https://unpkg.com https://www.youtube.com; style-src 'self' 'unsafe-inline' https://unpkg.com; img-src 'self' data: https://i.ytimg.com https://*.ytimg.com https://tiles.openfreemap.org https://server.arcgisonline.com; connect-src 'self' https://unpkg.com https://tiles.openfreemap.org https://server.arcgisonline.com; frame-src https://www.youtube-nocookie.com https://www.youtube.com; worker-src 'self' blob:; child-src blob:;
