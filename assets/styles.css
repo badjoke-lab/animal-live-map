@@ -49,3 +49,19 @@
   .player-meta{flex-direction:column;align-items:flex-start;justify-content:flex-start;padding:16px;gap:14px;overflow:auto}
   .mobile-player .video-preview{min-height:0;aspect-ratio:16/9}
 }
+
+/* Location-level camera picker: a count of 3/4/9 means selectable cameras. */
+.location-camera-chooser{padding:18px 15px 22px}
+.location-camera-chooser h2{font-size:20px;line-height:1.35;margin:0 0 7px;font-weight:800}
+.chooser-subtitle{color:var(--muted);font-size:13px;margin:0 0 16px}
+.location-camera-options{display:grid;gap:9px}
+.location-camera-option{display:flex;align-items:center;gap:10px;width:100%;min-height:88px;padding:8px;text-align:left;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:12px;cursor:pointer}
+.location-camera-option:hover,.location-camera-option:focus-visible{border-color:#1687ef;background:#edf7ff}
+.location-camera-option img{width:106px;height:70px;flex:0 0 106px;object-fit:cover;border-radius:8px;background:#1a1e24}
+.chooser-info{min-width:0;flex:1;display:block}
+.chooser-info strong{display:block;font-size:13px;line-height:1.4}
+.chooser-info small{display:block;font-size:11px;color:var(--muted);margin-top:5px}
+.chooser-chevron{font-size:23px;color:var(--blue);flex:0 0 auto}
+.group-back{width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:var(--panel);color:var(--blue);cursor:pointer;padding:13px 15px;font-size:13px;font-weight:800}
+.group-back:hover{background:#edf7ff}
+.dark .location-camera-option:hover,.dark .location-camera-option:focus-visible,.dark .group-back:hover{background:#17314a}
