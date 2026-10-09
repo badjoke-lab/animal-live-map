@@ -248,15 +248,20 @@ function syncMapMarkers(map){
   for(const [id,{location:l,count}] of visible){
     let marker=markers.get(id);
     if(!marker){
+      // The outer element belongs exclusively to MapLibre: it must retain the
+      // library's absolute positioning and geographic translate transform.
+      const anchor=document.createElement('div');
+      anchor.className='alm-marker-anchor';
       const el=document.createElement('button');
       el.type='button';el.className='location-pin';
       el.dataset.locationId=id;
       el.setAttribute('aria-label',locName(l));
       el.addEventListener('click',e=>{e.stopPropagation();selectLocation(id,map.getContainer().id==='mobileMap')});
-      marker=new maplibregl.Marker({element:el,anchor:'bottom'}).setLngLat([l.lng,l.lat]).addTo(map);
+      anchor.appendChild(el);
+      marker=new maplibregl.Marker({element:anchor,anchor:'center'}).setLngLat([l.lng,l.lat]).addTo(map);
       markers.set(id,marker);
     }
-    const el=marker.getElement();
+    const el=marker.getElement().querySelector('.location-pin');
     el.classList.toggle('selected',state.selectedLocation===id);
     el.classList.toggle('wild',l.environmentType==='wild');
     el.classList.toggle('zoo',l.environmentType==='zoo');

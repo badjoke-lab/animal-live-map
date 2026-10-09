@@ -16,9 +16,9 @@
 }
 
 /* Map pins use DOM markers, independent of asynchronous map style layers. */
-.location-pin{position:relative;display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border:3px solid #fff;border-radius:50% 50% 50% 9px;background:#278cbd;transform:rotate(-45deg);box-shadow:0 3px 12px #0006;cursor:pointer;touch-action:manipulation;z-index:1}
-.location-pin .pin-glyph{font-size:17px;line-height:1;transform:rotate(45deg)}
-.location-pin .pin-count{position:absolute;right:-11px;top:-10px;border:2px solid white;border-radius:12px;background:#102437;color:white;font-size:11px;line-height:17px;font-weight:800;min-width:21px;height:21px;transform:rotate(45deg)}
+.location-pin{position:relative;display:flex;align-items:center;justify-content:center;width:42px;height:42px;padding:0;border:3px solid #fff;border-radius:50%;background:#278cbd;box-shadow:0 3px 12px #0006;cursor:pointer;touch-action:manipulation;z-index:1}
+.location-pin .pin-glyph{font-size:17px;line-height:1}
+.location-pin .pin-count{position:absolute;right:-11px;top:-10px;border:2px solid white;border-radius:12px;background:#102437;color:white;font-size:11px;line-height:17px;font-weight:800;min-width:21px;height:21px}
 .location-pin.wild{background:#3c954a}.location-pin.zoo{background:#d89817}.location-pin.aquarium{background:#1787d0}
 .location-pin.selected{outline:4px solid #176cbd;outline-offset:3px;z-index:2}
 .location-pin:focus-visible{outline:4px solid #176cbd;outline-offset:4px}
