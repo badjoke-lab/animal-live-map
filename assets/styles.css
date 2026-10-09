@@ -65,3 +65,8 @@
 .group-back{width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:var(--panel);color:var(--blue);cursor:pointer;padding:13px 15px;font-size:13px;font-weight:800}
 .group-back:hover{background:#edf7ff}
 .dark .location-camera-option:hover,.dark .location-camera-option:focus-visible,.dark .group-back:hover{background:#17314a}
+
+.location-share{margin:0 0 14px;min-height:44px;padding:0 14px;background:var(--panel);color:var(--text);border:1px solid var(--line);border-radius:9px;font-weight:700;cursor:pointer}
+.location-share:hover,.location-share:focus-visible{border-color:var(--blue)}
+
+.sheet-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}.sheet-actions .btn{min-width:44px;min-height:44px}

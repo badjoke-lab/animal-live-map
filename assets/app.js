@@ -204,7 +204,21 @@ function matches(c,{ignoreAnimal=false}={}){const l=locationFor(c);if(state.type
 const filtered=(opts)=>state.data.cameras.filter(c=>matches(c,opts));
 function readUrlState(){const p=new URL(location.href).searchParams;state.query=p.get('q')||'';state.type=p.get('type')||'all';state.focus=p.get('focus')||'all';state.animal=p.get('animal')||'all';state.region=p.get('region')||'all';state.localPeriod=p.get('local')||'all';state.liveOnly=p.get('live')==='1'}
 function normalizeFacetState(){const types=new Set(['all',...state.data.locations.map(l=>l.environmentType)]),focuses=new Set(['all',...state.data.cameras.map(c=>c.focus)]),animals=new Set(['all',...animalOptions().map(([v])=>v)]),regions=new Set(['all',...regionOptions().map(([v])=>v)]),localPeriods=new Set(['all','day','night']);if(!types.has(state.type))state.type='all';if(!focuses.has(state.focus))state.focus='all';if(!animals.has(state.animal))state.animal='all';if(!regions.has(state.region))state.region='all';if(!localPeriods.has(state.localPeriod))state.localPeriod='all'}
-function syncUrl(){const u=new URL(location.href);const p=u.searchParams;for(const k of ['camera','q','type','focus','animal','region','local','live'])p.delete(k);if(state.query)p.set('q',state.query);if(state.type!=='all')p.set('type',state.type);if(state.focus!=='all')p.set('focus',state.focus);if(state.animal!=='all')p.set('animal',state.animal);if(state.region!=='all')p.set('region',state.region);if(state.localPeriod!=='all')p.set('local',state.localPeriod);if(state.liveOnly&&state.runtimeAvailable)p.set('live','1');if(state.selectedCamera)p.set('camera',state.selectedCamera);history.replaceState({},'',u)}
+function syncUrl(mode='replace'){
+  const u=new URL(location.href),p=u.searchParams;
+  for(const k of ['camera','location','q','type','focus','animal','region','local','live'])p.delete(k);
+  if(state.query)p.set('q',state.query);
+  if(state.type!=='all')p.set('type',state.type);
+  if(state.focus!=='all')p.set('focus',state.focus);
+  if(state.animal!=='all')p.set('animal',state.animal);
+  if(state.region!=='all')p.set('region',state.region);
+  if(state.localPeriod!=='all')p.set('local',state.localPeriod);
+  if(state.liveOnly&&state.runtimeAvailable)p.set('live','1');
+  if(state.groupListOpen&&state.groupLocation)p.set('location',state.groupLocation);
+  else if(state.selectedCamera)p.set('camera',state.selectedCamera);
+  if(u.toString()===location.href)return;
+  history[mode==='push'?'pushState':'replaceState']({},'',u);
+}
 function applyRuntimeAvailabilityUi(){
   if(!state.runtimeAvailable)state.liveOnly=false;
   document.querySelectorAll('[data-filter-kind="live"]').forEach(b=>{b.hidden=!state.runtimeAvailable});
@@ -224,7 +238,7 @@ function selectGroupCamera(id){
   state.selectedCamera=c.id;
   state.selectedLocation=c.locationId;
   state.groupListOpen=false;
-  renderList();renderDetail();updateMaps();syncOpenPlayer();syncUrl();
+  renderList();renderDetail();updateMaps();syncOpenPlayer();syncUrl('push');
   document.querySelector('#desktopDetail').scrollTop=0;
 }
 function renderDetail(){
@@ -233,8 +247,9 @@ function renderDetail(){
     const l=state.data.locations.find(l=>l.id===state.groupLocation);
     const cams=camerasAtLocation(state.groupLocation);
     if(l&&cams.length>1){
-      box.innerHTML=`<section class="location-camera-chooser"><h2>${esc(locName(l))}</h2><p class="chooser-subtitle">${cams.length} ${esc(t.camUnit)} · ${esc(lang==='ja'?'視聴するカメラを選択':'Select a camera to watch')}</p><div class="location-camera-options">${cams.map(cam=>`<button class="location-camera-option" type="button" data-group-camera="${esc(cam.id)}" aria-label="${esc(camName(cam))}"><img src="${thumb(cam)}" loading="lazy" alt=""><span class="chooser-info"><strong>${esc(camName(cam))}</strong><small>🐾 ${esc(animalName(cam))}</small>${state.runtimeAvailable?`<small>${esc(statusLabel(cam))}</small>`:''}</span><span class="chooser-chevron" aria-hidden="true">›</span></button>`).join('')}</div></section>`;
+      box.innerHTML=`<section class="location-camera-chooser"><h2>${esc(locName(l))}</h2><p class="chooser-subtitle">${cams.length} ${esc(t.camUnit)} · ${esc(lang==='ja'?'視聴するカメラを選択':'Select a camera to watch')}</p><button type="button" class="location-share" data-share-location>⌯ ${esc(t.share)}</button><div class="location-camera-options">${cams.map(cam=>`<button class="location-camera-option" type="button" data-group-camera="${esc(cam.id)}" aria-label="${esc(camName(cam))}"><img src="${thumb(cam)}" loading="lazy" alt=""><span class="chooser-info"><strong>${esc(camName(cam))}</strong><small>🐾 ${esc(animalName(cam))}</small>${state.runtimeAvailable?`<small>${esc(statusLabel(cam))}</small>`:''}</span><span class="chooser-chevron" aria-hidden="true">›</span></button>`).join('')}</div></section>`;
       box.dataset.cameraId='';
+      box.querySelector('[data-share-location]')?.addEventListener('click',()=>shareLocation(l.id));
       box.querySelectorAll('[data-group-camera]').forEach(button=>button.addEventListener('click',()=>selectGroupCamera(button.dataset.groupCamera)));
       return;
     }
@@ -247,11 +262,11 @@ function renderDetail(){
   const back=canReturn?`<button type="button" class="group-back" data-group-back>‹ ${esc(locName(l))} · ${camerasAtLocation(c.locationId).length} ${esc(t.camUnit)}</button>`:'';
   box.innerHTML=`${back}<div class="player">${previewMarkup(c)}</div><div class="detail-body">${infoDetail(c,l,false)}</div>`;
   box.dataset.cameraId=c.id;
-  box.querySelector('[data-group-back]')?.addEventListener('click',()=>{state.groupListOpen=true;renderDetail();box.scrollTop=0});
+  box.querySelector('[data-group-back]')?.addEventListener('click',()=>{state.groupListOpen=true;renderDetail();syncUrl();box.scrollTop=0});
   box.querySelectorAll('[data-share]').forEach(b=>b.addEventListener('click',share));
 }
 
-function selectCamera(id,move=false){const c=state.data.cameras.find(x=>x.id===id);if(!c)return;state.groupLocation=null;state.groupListOpen=false;state.selectedCamera=c.id;state.selectedLocation=c.locationId;renderList();renderDetail();updateMaps();syncOpenPlayer();syncUrl();if(move){const l=locationFor(c);if(l.precision!=='hidden'&&Number.isFinite(l.lat)&&Number.isFinite(l.lng)){state.maps.desktop?.easeTo({center:[l.lng,l.lat],zoom:Math.max(4,state.maps.desktop.getZoom()),duration:500})}}}
+function selectCamera(id,move=false,historyMode='push'){const c=state.data.cameras.find(x=>x.id===id);if(!c)return;state.groupLocation=null;state.groupListOpen=false;state.selectedCamera=c.id;state.selectedLocation=c.locationId;renderList();renderDetail();updateMaps();syncOpenPlayer();syncUrl(historyMode);if(move){const l=locationFor(c);if(l.precision!=='hidden'&&Number.isFinite(l.lat)&&Number.isFinite(l.lng)){state.maps.desktop?.easeTo({center:[l.lng,l.lat],zoom:Math.max(4,state.maps.desktop.getZoom()),duration:500})}}}
 // HTML markers are independent of the vector style and survive map/satellite switches.
 const pinSets=new WeakMap();
 function visibleLocations(){
@@ -321,14 +336,14 @@ function selectLocation(id,mobile){
   if(!cams.length)return;
   state.selectedLocation=id;
   state.selectedCamera=cams[0].id;
-  state.groupLocation=!mobile&&cams.length>1?id:null;
-  state.groupListOpen=!mobile&&cams.length>1;
-  updateMaps();syncUrl();
-  if(mobile){if(cams.length===1)openMobileDetail(cams[0].id);else renderSheet(id)}
+  state.groupLocation=cams.length>1?id:null;
+  state.groupListOpen=cams.length>1;
+  updateMaps();syncUrl('push');
+  if(mobile){if(cams.length===1)openMobileDetail(cams[0].id,false);else renderSheet(id)}
   else{renderList();renderDetail();document.querySelector('#desktopDetail').scrollTop=0}
 }
-function renderSheet(id){const l=state.data.locations.find(x=>x.id===id),cams=filtered().filter(c=>c.locationId===id),s=document.querySelector('#sheet');if(!l||!cams.length){s.classList.remove('open');return}s.innerHTML=`<div class="grab"></div><div class="sheet-head"><div><h2>${esc(locName(l))}</h2><p>${esc(countryName(l))} · ${esc(regionName(l))}　${cams.length} ${esc(t.camUnit)}</p></div><button class="btn" data-close-sheet aria-label="${esc(t.close)}">×</button></div><div class="sheet-list">${cams.map(c=>`<button class="sheet-row" data-sheet-camera="${esc(c.id)}"><img src="${thumb(c)}" alt="" loading="lazy"><span><strong>${esc(camName(c))}</strong><span>🐾 ${esc(animalName(c))}</span></span><b>›</b></button>`).join('')}</div>`;s.classList.add('open');s.querySelector('[data-close-sheet]').addEventListener('click',()=>s.classList.remove('open'));s.querySelectorAll('[data-sheet-camera]').forEach(b=>b.addEventListener('click',()=>openMobileDetail(b.dataset.sheetCamera)))}
-function openMobileDetail(id){selectCamera(id,false);const c=state.data.cameras.find(x=>x.id===id),l=locationFor(c),d=document.querySelector('#mobileDetail');d.innerHTML=`<div class="mobile-detail-head"><button class="round" data-back aria-label="${esc(t.back)}">‹</button><h2>${esc(t.title)}</h2><button class="round" data-share aria-label="${esc(t.share)}">⌯</button></div><div class="mobile-player">${previewMarkup(c)}</div><div class="mobile-detail-body">${infoDetail(c,l,true)}</div>`;d.classList.add('open');d.dataset.videoId=c.videoId;document.querySelector('#sheet').classList.remove('open');d.querySelector('[data-back]').addEventListener('click',()=>{d.classList.remove('open');d.innerHTML='';if(camerasAtLocation(l.id).length>1)renderSheet(l.id)});d.querySelectorAll('[data-share]').forEach(b=>b.addEventListener('click',share))}
+function renderSheet(id){const l=state.data.locations.find(x=>x.id===id),cams=filtered().filter(c=>c.locationId===id),s=document.querySelector('#sheet');if(!l||!cams.length){s.classList.remove('open');return}s.innerHTML=`<div class="grab"></div><div class="sheet-head"><div><h2>${esc(locName(l))}</h2><p>${esc(countryName(l))} · ${esc(regionName(l))}　${cams.length} ${esc(t.camUnit)}</p></div><div class="sheet-actions"><button class="btn" data-share-location aria-label="${esc(t.share)}">⌯</button><button class="btn" data-close-sheet aria-label="${esc(t.close)}">×</button></div></div><div class="sheet-list">${cams.map(c=>`<button class="sheet-row" data-sheet-camera="${esc(c.id)}"><img src="${thumb(c)}" alt="" loading="lazy"><span><strong>${esc(camName(c))}</strong><span>🐾 ${esc(animalName(c))}</span></span><b>›</b></button>`).join('')}</div>`;s.classList.add('open');s.querySelector('[data-close-sheet]').addEventListener('click',()=>s.classList.remove('open'));s.querySelector('[data-share-location]').addEventListener('click',()=>shareLocation(id));s.querySelectorAll('[data-sheet-camera]').forEach(b=>b.addEventListener('click',()=>openMobileDetail(b.dataset.sheetCamera)))}
+function openMobileDetail(id,recordHistory=true){selectCamera(id,false,recordHistory?'push':'replace');const c=state.data.cameras.find(x=>x.id===id),l=locationFor(c),d=document.querySelector('#mobileDetail');d.innerHTML=`<div class="mobile-detail-head"><button class="round" data-back aria-label="${esc(t.back)}">‹</button><h2>${esc(t.title)}</h2><button class="round" data-share aria-label="${esc(t.share)}">⌯</button></div><div class="mobile-player">${previewMarkup(c)}</div><div class="mobile-detail-body">${infoDetail(c,l,true)}</div>`;d.classList.add('open');d.dataset.videoId=c.videoId;document.querySelector('#sheet').classList.remove('open');d.querySelector('[data-back]').addEventListener('click',()=>{d.classList.remove('open');d.innerHTML='';if(camerasAtLocation(l.id).length>1)renderSheet(l.id)});d.querySelectorAll('[data-share]').forEach(b=>b.addEventListener('click',share))}
 function openSearch(focus=false){state.overlay='search';const o=document.querySelector('#overlay');o.innerHTML=`<div class="overlay-head"><label class="search">⌕<input id="mobileSearch" aria-label="${esc(t.search)}" value="${esc(state.query)}" placeholder="${esc(t.search)}"></label><button data-close>${esc(t.cancel)}</button></div><div id="results" class="results"></div>`;o.classList.add('open');renderResults();const i=o.querySelector('#mobileSearch');i.addEventListener('input',()=>{state.query=i.value.trim();document.querySelector('#searchDesktop').value=state.query;refresh(false);renderResults();syncUrl()});o.querySelector('[data-close]').addEventListener('click',closeOverlay);if(focus)setTimeout(()=>i.focus(),30)}
 function renderResults(){const box=document.querySelector('#results');if(!box)return;const cams=filtered();box.innerHTML=`<div class="section-head"><strong>${esc(t.results)}</strong><span class="count" aria-live="polite">${cams.length}</span></div>${cams.length?cams.map(c=>{const l=locationFor(c),badge=state.runtimeAvailable?`<span class="badge ${statusBadgeClass(c)}">${esc(c.streamStatus==='live'?'LIVE':statusLabel(c))}</span>`:'';return `<button class="result" data-result="${esc(c.id)}"><span class="result-thumb"><img src="${thumb(c)}" alt="" loading="lazy">${badge}</span><span><h3>${esc(camName(c))}</h3><p>${esc(locName(l))}</p><p>${esc(countryName(l))} · ${esc(regionName(l))}</p><span class="tags"><span class="tag blue">${typeEmoji[l.environmentType]||'•'} ${esc(typeText[l.environmentType]||l.environmentType)}</span><span class="tag">🐾 ${esc(animalName(c))}</span></span></span><b>›</b></button>`}).join(''):`<div class="empty">${esc(t.no)}</div>`}`;box.querySelectorAll('[data-result]').forEach(b=>b.addEventListener('click',()=>{closeOverlay();openMobileDetail(b.dataset.result)}))}
 function openAnimals(){state.overlay='animals';const o=document.querySelector('#overlay'),m=new Map();filtered({ignoreAnimal:true}).forEach(c=>m.set(animalName(c),(m.get(animalName(c))||0)+1));o.innerHTML=`<div class="overlay-head"><b>${esc(t.animalsTab)}</b><button data-close>${esc(t.cancel)}</button></div><div class="animal-grid">${[...m.entries()].sort((a,b)=>b[1]-a[1]).map(([n,c])=>`<button class="animal-card" data-animal="${esc(n)}"><b>🐾 ${esc(n)}</b><span>${c} ${esc(t.camUnit)}</span></button>`).join('')}</div>`;o.classList.add('open');o.querySelector('[data-close]').addEventListener('click',closeOverlay);o.querySelectorAll('[data-animal]').forEach(b=>b.addEventListener('click',()=>{const found=state.data.cameras.find(c=>animalName(c)===b.dataset.animal);state.animal=(found?.animalEn||found?.animalJa||'').trim().toLocaleLowerCase()||'all';closeOverlay();document.querySelectorAll('[data-select-kind="animal"]').forEach(s=>{s.value=state.animal});refresh();syncUrl()}))}
@@ -338,8 +353,43 @@ function toggleDesktopMenu(){const m=document.querySelector('#desktopMenu'),b=do
 function setTheme(next){state.theme=next;localStorage.setItem('alm-theme',state.theme);applyTheme();document.querySelectorAll('[data-desktop-theme]').forEach(b=>b.classList.toggle('active',b.dataset.desktopTheme===state.theme))}
 function closeOverlay(){document.querySelector('#overlay').classList.remove('open');state.overlay=null;document.querySelectorAll('[data-tab]').forEach(b=>{const active=b.dataset.tab==='map';b.classList.toggle('active',active);if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')})}
 function switchLang(next){if(next===lang)return;localStorage.setItem('alm-language',next);syncUrl();location.href=`../${next}/${location.search}`}
-function share(){const c=state.selectedCamera;if(!c)return;const u=new URL(location.href);u.searchParams.set('camera',c);const d={title:camName(state.data.cameras.find(x=>x.id===c)),url:u.toString()};if(navigator.share)navigator.share(d).catch(()=>{});else navigator.clipboard?.writeText(u.toString())}
+function shareLink(title,key,value){
+  // Independent deep links must work even when the sharer's filters differ.
+  const u=new URL(location.href);u.search='';u.searchParams.set(key,value);
+  const d={title,url:u.toString()};
+  if(navigator.share)navigator.share(d).catch(()=>{});
+  else navigator.clipboard?.writeText(u.toString());
+}
+function share(){const c=state.data.cameras.find(x=>x.id===state.selectedCamera);if(c)shareLink(camName(c),'camera',c.id)}
+function shareLocation(id){const l=state.data.locations.find(x=>x.id===id);if(l)shareLink(locName(l),'location',l.id)}
+function restoreUrlNavigation(){
+  if(!state.data)return;
+  closePlayer();
+  readUrlState();normalizeFacetState();
+  const params=new URL(location.href).searchParams;
+  const available=filtered();
+  const namedCamera=available.find(c=>c.id===params.get('camera'));
+  const locationId=params.get('location');
+  const group=state.data.locations.find(l=>l.id===locationId);
+  const groupCameras=group?available.filter(c=>c.locationId===group.id):[];
+  state.groupLocation=groupCameras.length>1?locationId:null;
+  state.groupListOpen=!!state.groupLocation&&innerWidth>900;
+  const chosen=namedCamera||groupCameras[0]||available[0];
+  state.selectedCamera=chosen?.id||null;
+  state.selectedLocation=chosen?.locationId||null;
+  document.querySelector('#searchDesktop').value=state.query;
+  const mobileSearch=document.querySelector('#mobileSearch');if(mobileSearch)mobileSearch.value=state.query;
+  const detail=document.querySelector('#mobileDetail');detail.classList.remove('open');detail.innerHTML='';
+  const sheet=document.querySelector('#sheet');sheet.classList.remove('open');
+  syncFilters();refresh();
+  if(innerWidth<=900){
+    if(namedCamera)openMobileDetail(namedCamera.id,false);
+    else if(groupCameras.length>1)renderSheet(group.id);
+    else if(groupCameras.length===1)openMobileDetail(groupCameras[0].id,false);
+  }
+}
+
 function refresh(updateMobile=true){const cams=filtered();if(!cams.some(c=>c.id===state.selectedCamera)){state.selectedCamera=cams[0]?.id||null;state.selectedLocation=cams[0]?.locationId||null}renderList();renderDetail();updateMaps();if(updateMobile&&state.overlay==='search')renderResults()}
-function bind(){bindFilters();syncFilters();document.querySelector('#searchDesktop').addEventListener('input',e=>{state.query=e.target.value.trim();refresh();syncUrl()});document.querySelector('#langDesktop').addEventListener('click',()=>switchLang(lang==='ja'?'en':'ja'));document.querySelector('#themeDesktop').addEventListener('click',()=>{setTheme(state.theme==='system'?'light':state.theme==='light'?'dark':'system')});document.querySelector('#menuDesktop').addEventListener('click',e=>{e.stopPropagation();toggleDesktopMenu()});document.querySelectorAll('[data-desktop-lang]').forEach(b=>b.addEventListener('click',()=>switchLang(b.dataset.desktopLang)));document.querySelectorAll('[data-desktop-theme]').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.desktopTheme)));document.addEventListener('click',e=>{if(!e.target.closest('.actions'))closeDesktopMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDesktopMenu()});document.addEventListener('click',e=>{const button=e.target.closest('[data-play-camera]');if(!button)return;const c=state.data?.cameras.find(x=>x.id===button.dataset.playCamera);if(c)openPlayer(c)});document.querySelector('#playerClose').addEventListener('click',closePlayer);document.addEventListener('keydown',e=>{if(e.key==='Escape')closePlayer()});enablePlayerDrag();document.querySelectorAll('[data-map-mode]').forEach(b=>b.addEventListener('click',()=>setMapMode(b.dataset.mapMode)));document.querySelector('#openSearch').addEventListener('click',()=>openSearch(true));document.querySelector('#openMenu').addEventListener('click',openSettings);document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>{x.classList.toggle('active',x===b);if(x===b)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});const mobileDetail=document.querySelector('#mobileDetail');mobileDetail.classList.remove('open');mobileDetail.innerHTML='';document.querySelector('#sheet').classList.remove('open');if(b.dataset.tab==='map')closeOverlay();if(b.dataset.tab==='list')openSearch(false);if(b.dataset.tab==='animals')openAnimals();if(b.dataset.tab==='settings')openSettings()}));addEventListener('resize',()=>{if(innerWidth<=900)ensureMap('mobile');else ensureMap('desktop')})}
-async function boot(){applyTheme();const r=await fetch('../data/public-v0.json',{cache:'no-store'});if(!r.ok)throw new Error('data load failed');state.data=await r.json();for(const c of state.data.cameras)staticCameraValues.set(c.id,{videoId:c.videoId,embeddable:c.embeddable});readUrlState();normalizeFacetState();renderShell();bind();applyRuntimeAvailabilityUi();document.querySelector('#searchDesktop').value=state.query;const req=new URL(location.href).searchParams.get('camera'),c=state.data.cameras.find(x=>x.id===req)||state.data.cameras[0];state.selectedCamera=c?.id||null;state.selectedLocation=c?.locationId||null;refresh();syncUrl();if(innerWidth<=900)ensureMap('mobile');else ensureMap('desktop');if(optionalStatusFeed){void runtimeProbe();}}
+function bind(){bindFilters();syncFilters();document.querySelector('#searchDesktop').addEventListener('input',e=>{state.query=e.target.value.trim();refresh();syncUrl()});document.querySelector('#langDesktop').addEventListener('click',()=>switchLang(lang==='ja'?'en':'ja'));document.querySelector('#themeDesktop').addEventListener('click',()=>{setTheme(state.theme==='system'?'light':state.theme==='light'?'dark':'system')});document.querySelector('#menuDesktop').addEventListener('click',e=>{e.stopPropagation();toggleDesktopMenu()});document.querySelectorAll('[data-desktop-lang]').forEach(b=>b.addEventListener('click',()=>switchLang(b.dataset.desktopLang)));document.querySelectorAll('[data-desktop-theme]').forEach(b=>b.addEventListener('click',()=>setTheme(b.dataset.desktopTheme)));document.addEventListener('click',e=>{if(!e.target.closest('.actions'))closeDesktopMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeDesktopMenu()});document.addEventListener('click',e=>{const button=e.target.closest('[data-play-camera]');if(!button)return;const c=state.data?.cameras.find(x=>x.id===button.dataset.playCamera);if(c)openPlayer(c)});document.querySelector('#playerClose').addEventListener('click',closePlayer);document.addEventListener('keydown',e=>{if(e.key==='Escape')closePlayer()});window.addEventListener('popstate',restoreUrlNavigation);enablePlayerDrag();document.querySelectorAll('[data-map-mode]').forEach(b=>b.addEventListener('click',()=>setMapMode(b.dataset.mapMode)));document.querySelector('#openSearch').addEventListener('click',()=>openSearch(true));document.querySelector('#openMenu').addEventListener('click',openSettings);document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-tab]').forEach(x=>{x.classList.toggle('active',x===b);if(x===b)x.setAttribute('aria-current','page');else x.removeAttribute('aria-current')});const mobileDetail=document.querySelector('#mobileDetail');mobileDetail.classList.remove('open');mobileDetail.innerHTML='';document.querySelector('#sheet').classList.remove('open');if(b.dataset.tab==='map')closeOverlay();if(b.dataset.tab==='list')openSearch(false);if(b.dataset.tab==='animals')openAnimals();if(b.dataset.tab==='settings')openSettings()}));addEventListener('resize',()=>{if(innerWidth<=900)ensureMap('mobile');else ensureMap('desktop')})}
+async function boot(){applyTheme();const r=await fetch('../data/public-v0.json',{cache:'no-store'});if(!r.ok)throw new Error('data load failed');state.data=await r.json();for(const c of state.data.cameras)staticCameraValues.set(c.id,{videoId:c.videoId,embeddable:c.embeddable});readUrlState();normalizeFacetState();renderShell();bind();applyRuntimeAvailabilityUi();document.querySelector('#searchDesktop').value=state.query;const params=new URL(location.href).searchParams,req=params.get('camera'),c=state.data.cameras.find(x=>x.id===req)||state.data.cameras[0];state.selectedCamera=c?.id||null;state.selectedLocation=c?.locationId||null;refresh();if(innerWidth<=900)ensureMap('mobile');else ensureMap('desktop');restoreUrlNavigation();if(optionalStatusFeed){void runtimeProbe();}}
 boot().catch(e=>{console.error(e);app.innerHTML=`<div class="empty">Animal Live Map<br>${esc(e.message)}</div>`});
