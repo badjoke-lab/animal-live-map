@@ -70,3 +70,22 @@
 .location-share:hover,.location-share:focus-visible{border-color:var(--blue)}
 
 .sheet-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}.sheet-actions .btn{min-width:44px;min-height:44px}
+
+/* Discovery: group cameras by their actual location, matching numbered map pins. */
+.camera-location-group+.camera-location-group{margin-top:13px}
+.camera-location-heading,.results-location-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:0;padding:10px 9px 7px;font-size:12px;line-height:1.4;color:var(--muted);font-weight:800;border-bottom:1px solid var(--line)}
+.camera-location-heading span,.results-location-heading span{white-space:nowrap;font-size:11px;font-weight:650}
+.results-summary{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 9px;border-bottom:1px solid var(--line);font-size:13px}
+.results-summary .count{font-size:12px}
+.results-location+.results-location{margin-top:12px}
+.result{display:flex;flex-direction:column;gap:0;padding:0 5px 9px;border-bottom:1px solid var(--line)}
+.result-main{display:grid;grid-template-columns:100px minmax(0,1fr) 18px;gap:10px;align-items:center;width:100%;min-height:88px;padding:8px 2px;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.result-main .result-text{display:flex;flex-direction:column;gap:5px;min-width:0}
+.result-main .result-text strong{font-size:13px;line-height:1.35}
+.result-main .result-text>span{font-size:11px;color:var(--muted)}
+.result-main .result-text .result-animal{color:var(--text)}
+.result-main .result-chevron{color:var(--blue);font-size:22px}
+.result-main:hover,.result-main:focus-visible{background:#eaf4ff;border-radius:10px}
+.result-map{align-self:flex-end;min-height:44px;min-width:125px;padding:0 14px;margin:0 4px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--blue);font-size:12px;font-weight:750;cursor:pointer}
+.result-map:hover,.result-map:focus-visible{border-color:var(--blue);background:#eaf4ff}
+.dark .result-main:hover,.dark .result-main:focus-visible,.dark .result-map:hover,.dark .result-map:focus-visible{background:#17314a}
