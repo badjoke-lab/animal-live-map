@@ -1,11 +1,14 @@
 // Optional same-origin public LIVE-state feed.
 const VIDEO_ID=/^[A-Za-z0-9_-]{11}$/;
 const STATES=new Set(['live','scheduled','offline','unknown']);
+// Explicitly trusted public status publisher. Do not allow arbitrary third-party feeds.
+const APPROVED_EXTERNAL_FEED='https://animal-live-map-status.badjoke-lab.workers.dev/status';
 export function resolveStatusFeedUrl(value,pageUrl){
   if(!value || typeof value!=='string')return null;
   try{
     const url=new URL(value,pageUrl), page=new URL(pageUrl);
-    if(url.origin!==page.origin || !['https:','http:'].includes(url.protocol))return null;
+    if(url.origin!==page.origin && url.href!==APPROVED_EXTERNAL_FEED)return null;
+    if(!['https:','http:'].includes(url.protocol))return null;
     if(url.username || url.password)return null;
     if(url.search || url.hash)return null;
     return url.href;
