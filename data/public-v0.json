@@ -269,6 +269,24 @@
       "lng": null,
       "precision": "hidden",
       "timezone": "America/Chicago"
+    },
+    {
+      "id": "kumamoto-zoo-main",
+      "nameNative": "熊本市動植物園",
+      "nameJa": "熊本市動植物園",
+      "nameEn": "Kumamoto City Zoo and Botanical Gardens",
+      "countryCode": "JP",
+      "regionNative": "熊本県",
+      "regionJa": "熊本県",
+      "regionEn": "Kumamoto",
+      "cityNative": "熊本市",
+      "cityJa": "熊本市",
+      "cityEn": "Kumamoto",
+      "environmentType": "zoo",
+      "lat": 32.778333,
+      "lng": 130.750278,
+      "precision": "approximate",
+      "timezone": "Asia/Tokyo"
     }
   ],
   "cameras": [
@@ -689,6 +707,36 @@
       "scheduleType": "continuous",
       "focus": "nest",
       "officialUrl": "https://www.raptorresource.org/birdcams/decorah-north-nest/",
+      "embeddable": null,
+      "streamStatus": "unknown"
+    },
+    {
+      "id": "kumamoto-zoo-african-elephant",
+      "locationId": "kumamoto-zoo-main",
+      "nameNative": "熊本市動植物園 アフリカゾウ",
+      "nameJa": "アフリカゾウ",
+      "nameEn": "African Elephant Cam",
+      "animalJa": "アフリカゾウ",
+      "animalEn": "African Elephant",
+      "videoId": "iLsJ1R8iz78",
+      "scheduleType": "scheduled",
+      "focus": "exhibit",
+      "officialUrl": "https://www.ezooko.jp/kiji/pub/detail.aspx?c_id=3&id=1101&pg=1",
+      "embeddable": null,
+      "streamStatus": "unknown"
+    },
+    {
+      "id": "kumamoto-zoo-masai-giraffe",
+      "locationId": "kumamoto-zoo-main",
+      "nameNative": "熊本市動植物園 マサイキリン",
+      "nameJa": "マサイキリン",
+      "nameEn": "Masai Giraffe Cam",
+      "animalJa": "マサイキリン",
+      "animalEn": "Masai Giraffe",
+      "videoId": "EeU_fG7pmX4",
+      "scheduleType": "scheduled",
+      "focus": "exhibit",
+      "officialUrl": "https://www.ezooko.jp/kiji/pub/detail.aspx?c_id=3&id=1101&pg=1",
       "embeddable": null,
       "streamStatus": "unknown"
     }
