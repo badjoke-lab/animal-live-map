@@ -208,7 +208,7 @@ function focusFilteredPlaces(){
   }
 }
 function selectFacet(kind,label,icon,options,value){return `<label class="select-chip">${icon}<select data-select-kind="${kind}" aria-label="${esc(label)}"><option value="all">${esc(label)}</option>${options.map(([v,n])=>`<option value="${esc(v)}" ${v===value?'selected':''}>${esc(n)}</option>`).join('')}</select></label>`}
-function filterMarkup(){return [chip('live','live','🔴',t.live,'live'),chip('type','all','◉',t.all),chip('type','wild','🌲',t.wild),chip('type','zoo','🏛️',t.zoo),chip('type','aquarium','🐟',t.aquarium),chip('focus','nest','🪺',t.nest),chip('focus','feeder','🌿',t.feeder),selectFacet('animal',t.animalFilter,'🐾',animalOptions(),state.animal),selectFacet('region',t.regionFilter,'🌐',regionOptions(),state.region),selectFacet('place',t.placeFilter,'📍',placeOptions(),state.place),selectFacet('localPeriod',t.localTimeFilter,'◷',[['day',t.day],['night',t.night]],state.localPeriod)].join('')}
+function filterMarkup(){return [chip('live','live','🔴',t.live,'live'),chip('type','all','◉',t.all),chip('type','wild','🌲',t.wild),chip('type','zoo','🏛️',t.zoo),chip('type','aquarium','🐟',t.aquarium),chip('type','sanctuary','🐾',t.sanctuary),chip('focus','nest','🪺',t.nest),chip('focus','feeder','🌿',t.feeder),selectFacet('animal',t.animalFilter,'🐾',animalOptions(),state.animal),selectFacet('region',t.regionFilter,'🌐',regionOptions(),state.region),selectFacet('place',t.placeFilter,'📍',placeOptions(),state.place),selectFacet('localPeriod',t.localTimeFilter,'◷',[['day',t.day],['night',t.night]],state.localPeriod)].join('')}
 
 function renderShell(){
   app.innerHTML=`
