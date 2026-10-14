@@ -37,5 +37,5 @@ export function parseStatusFeed(document,cameras,now=Date.now()){
       actualEndAt:typeof candidate.actualEndAt==='string'?candidate.actualEndAt:null,
     });
   }
-  return updates.size?updates:null;
+  return updates.size===cameras.length?updates:null;
 }
