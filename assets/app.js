@@ -1,5 +1,5 @@
 import * as maplibregl from 'https://unpkg.com/maplibre-gl@6.13.0/dist/maplibre-gl.mjs';
-import { parseStatusFeed, resolveStatusFeedUrl } from './status-feed.js?v=complete-status-20261014';
+import { parseStatusFeed, resolveStatusFeedUrl } from './status-feed.js?v=catalog-rollout-20261017';
 
 const app = document.querySelector('#app');
 const lang = app.dataset.language === 'ja' ? 'ja' : 'en';
