@@ -50,7 +50,7 @@ function loadYouTubePlayerApi(){
 }
 const playerMarkup=(c,id)=>c.embeddable===false
   ?`<div class="player-fallback"><p>${esc(t.playbackUnavailable)}</p><a class="action youtube" href="https://www.youtube.com/watch?v=${encodeURIComponent(c.videoId)}" target="_blank" rel="noopener">▶ ${esc(t.youtube)}</a></div>`
-  :`<iframe id="${esc(id)}" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(c.videoId)}?autoplay=1&mute=1&playsinline=1&rel=0&enablejsapi=1&origin=${encodeURIComponent(location.origin)}" title="${esc(camName(c))}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  :`<iframe id="${esc(id)}" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(c.videoId)}?autoplay=1&playsinline=1&rel=0&enablejsapi=1&origin=${encodeURIComponent(location.origin)}" title="${esc(camName(c))}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
 function showPlayerFallback(id,c){
   const iframe=document.getElementById(id);
   const box=iframe?.parentElement;
@@ -60,10 +60,33 @@ function showPlayerFallback(id,c){
 async function watchPlayer(id,c){
   if(c.embeddable===false)return;
   if(!document.getElementById(id))return;
+  const isCurrent=()=>{
+    const layer=document.getElementById('playerLayer');
+    return !!(document.getElementById(id)&&layer&&!layer.hidden&&layer.dataset.cameraId===c.id&&layer.dataset.videoId===c.videoId);
+  };
   try{
     const YT=await loadYouTubePlayerApi();
-    if(!document.getElementById(id))return;
-    new YT.Player(id,{events:{onReady:e=>{try{e.target.mute();if(e.target.getPlayerState()!==1)e.target.playVideo();}catch{}},onError:()=>showPlayerFallback(id,c)}});
+    if(!isCurrent())return;
+    let mutedFallback=false;
+    new YT.Player(id,{events:{
+      onReady:e=>{
+        if(!isCurrent())return;
+        try{
+          if(!mutedFallback)e.target.unMute();
+          if(e.target.getPlayerState()!==1)e.target.playVideo();
+        }catch{}
+      },
+      onAutoplayBlocked:e=>{
+        if(!isCurrent()||mutedFallback)return;
+        try{
+          if(e.target.getPlayerState()===1)return;
+          mutedFallback=true;
+          e.target.mute();
+          e.target.playVideo();
+        }catch{}
+      },
+      onError:()=>{if(isCurrent())showPlayerFallback(id,c)}
+    }});
   }catch{}
 }
 
