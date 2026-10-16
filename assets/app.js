@@ -50,7 +50,7 @@ function loadYouTubePlayerApi(){
 }
 const playerMarkup=(c,id)=>c.embeddable===false
   ?`<div class="player-fallback"><p>${esc(t.playbackUnavailable)}</p><a class="action youtube" href="https://www.youtube.com/watch?v=${encodeURIComponent(c.videoId)}" target="_blank" rel="noopener">▶ ${esc(t.youtube)}</a></div>`
-  :`<iframe id="${esc(id)}" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(c.videoId)}?playsinline=1&rel=0&enablejsapi=1&origin=${encodeURIComponent(location.origin)}" title="${esc(camName(c))}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  :`<iframe id="${esc(id)}" src="https://www.youtube-nocookie.com/embed/${encodeURIComponent(c.videoId)}?autoplay=1&mute=1&playsinline=1&rel=0&enablejsapi=1&origin=${encodeURIComponent(location.origin)}" title="${esc(camName(c))}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
 function showPlayerFallback(id,c){
   const iframe=document.getElementById(id);
   const box=iframe?.parentElement;
@@ -78,13 +78,13 @@ function openPlayer(c){
   officialLink.hidden=!official;
   if(official)officialLink.href=official;
   layer.querySelector('#playerMetaTitle').textContent=camName(c);
+  layer.hidden=false;
   if(!same){
     layer.querySelector('#playerBody').innerHTML=playerMarkup(c,'floating-youtube-player');
     layer.dataset.cameraId=c.id;
     layer.dataset.videoId=c.videoId;
     watchPlayer('floating-youtube-player',c);
   }
-  layer.hidden=false;
   layer.querySelector('#playerClose').focus({preventScroll:true});
 }
 function closePlayer(){
