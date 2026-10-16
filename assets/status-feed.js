@@ -37,5 +37,10 @@ export function parseStatusFeed(document,cameras,now=Date.now()){
       actualEndAt:typeof candidate.actualEndAt==='string'?candidate.actualEndAt:null,
     });
   }
-  return updates.size===cameras.length?updates:null;
+  // During catalog-only additions, keep a fully validated existing monitor
+  // snapshot while newly published cameras remain explicitly unknown.
+  // Reject substantially incomplete, duplicate, or unrecognized snapshots.
+  const rolloutGap=Math.min(5,Math.ceil(cameras.length*0.05));
+  const completePublisherSnapshot=updates.size===document.cameras.length;
+  return completePublisherSnapshot && updates.size>=cameras.length-rolloutGap ? updates:null;
 }
