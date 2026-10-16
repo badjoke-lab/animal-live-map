@@ -37,5 +37,7 @@ export function parseStatusFeed(document,cameras,now=Date.now()){
       actualEndAt:typeof candidate.actualEndAt==='string'?candidate.actualEndAt:null,
     });
   }
-  return updates.size===cameras.length?updates:null;
+  const rolloutGap=Math.min(5,Math.ceil(cameras.length*0.05));
+  const completePublisherSnapshot=updates.size===document.cameras.length;
+  return completePublisherSnapshot && updates.size>=cameras.length-rolloutGap ? updates:null;
 }
