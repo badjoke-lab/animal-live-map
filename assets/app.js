@@ -63,7 +63,7 @@ async function watchPlayer(id,c){
   try{
     const YT=await loadYouTubePlayerApi();
     if(!document.getElementById(id))return;
-    new YT.Player(id,{events:{onError:()=>showPlayerFallback(id,c)}});
+    new YT.Player(id,{events:{onReady:e=>{try{e.target.mute();if(e.target.getPlayerState()!==1)e.target.playVideo();}catch{}},onError:()=>showPlayerFallback(id,c)}});
   }catch{}
 }
 
