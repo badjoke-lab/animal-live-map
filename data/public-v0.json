@@ -1295,6 +1295,24 @@
       "lng": 36.0802,
       "precision": "region",
       "timezone": "Africa/Dar_es_Salaam"
+    },
+    {
+      "id": "us-ohio-akron-bird-watching-hq-region",
+      "nameNative": "Bird Watching HQ — Akron, Ohio (approximate area)",
+      "nameJa": "バード・ウォッチングHQ（オハイオ州アクロン周辺）",
+      "nameEn": "Bird Watching HQ — Akron Area",
+      "countryCode": "US",
+      "regionNative": "Ohio",
+      "regionJa": "オハイオ州",
+      "regionEn": "Ohio",
+      "cityNative": "Akron area",
+      "cityJa": "アクロン周辺",
+      "cityEn": "Akron area",
+      "environmentType": "wild",
+      "lat": 41.08,
+      "lng": -81.52,
+      "precision": "region",
+      "timezone": "America/New_York"
     }
   ],
   "cameras": [
@@ -2990,6 +3008,36 @@
       "scheduleType": "continuous",
       "focus": "waterhole",
       "officialUrl": "https://africam.com/lodge/nimali-tarangire/",
+      "embeddable": null,
+      "streamStatus": "unknown"
+    },
+    {
+      "id": "birdwatchinghq-ohio-bird-feeder",
+      "locationId": "us-ohio-akron-bird-watching-hq-region",
+      "nameNative": "Bird Watching HQ — Ohio Bird Feeder Cam",
+      "nameJa": "オハイオ州の野鳥・餌台ライブカメラ",
+      "nameEn": "Ohio Bird Feeder Live Cam",
+      "animalJa": "ショウジョウコウカンチョウ・アオカケスなどの野鳥",
+      "animalEn": "Cardinals, Blue Jays and Other Wild Birds",
+      "videoId": "RiAovvbVl-Y",
+      "scheduleType": "continuous",
+      "focus": "feeder",
+      "officialUrl": "https://birdwatchinghq.com/live-cameras/",
+      "embeddable": null,
+      "streamStatus": "unknown"
+    },
+    {
+      "id": "birdwatchinghq-ohio-backyard-wildlife",
+      "locationId": "us-ohio-akron-bird-watching-hq-region",
+      "nameNative": "Bird Watching HQ — Ohio Backyard Wildlife Cam",
+      "nameJa": "オハイオ州の庭・地表の野生動物カメラ",
+      "nameEn": "Ohio Backyard Wildlife Ground Cam",
+      "animalJa": "リス・ウサギ・野鳥など",
+      "animalEn": "Squirrels, Rabbits, Birds and Other Wildlife",
+      "videoId": "ACT8r8r9b78",
+      "scheduleType": "continuous",
+      "focus": "habitat",
+      "officialUrl": "https://birdwatchinghq.com/live-cameras/",
       "embeddable": null,
       "streamStatus": "unknown"
     }
