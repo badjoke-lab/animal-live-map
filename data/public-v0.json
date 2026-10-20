@@ -1817,6 +1817,24 @@
       "lng": -2.12,
       "precision": "region",
       "timezone": "Europe/Madrid"
+    },
+    {
+      "id": "ro-bucovina-golden-eagle-region",
+      "nameNative": "Bucovina — Golden Eagle Conservation Region",
+      "nameJa": "ブコヴィナ地方・イヌワシ生息地域（代表位置）",
+      "nameEn": "Bucovina Golden Eagle Region (Representative Position)",
+      "countryCode": "RO",
+      "regionNative": "Bucovina",
+      "regionJa": "ブコヴィナ地方",
+      "regionEn": "Bucovina",
+      "cityNative": "Bucovina region",
+      "cityJa": "ブコヴィナ地方",
+      "cityEn": "Bucovina Region",
+      "environmentType": "wild",
+      "lat": 47.6,
+      "lng": 25.5,
+      "precision": "region",
+      "timezone": "Europe/Bucharest"
     }
   ],
   "cameras": [
@@ -4157,6 +4175,21 @@
       "scheduleType": "seasonal",
       "focus": "nest",
       "officialUrl": "https://directonatura.org/camaras-en-directo/",
+      "embeddable": null,
+      "streamStatus": "unknown"
+    },
+    {
+      "id": "wild-bucovina-golden-eagle-nest-one-2026",
+      "locationId": "ro-bucovina-golden-eagle-region",
+      "nameNative": "Cuibul Acvilei de Munte nr. 1 (2026)",
+      "nameJa": "ブコヴィナ・イヌワシ営巣カメラ1（2026）",
+      "nameEn": "Wild Bucovina Golden Eagle Nest 1 (2026)",
+      "animalJa": "イヌワシ",
+      "animalEn": "Golden Eagle",
+      "videoId": "35nqUqGeVNo",
+      "scheduleType": "seasonal",
+      "focus": "nest",
+      "officialUrl": "https://wildbucovina.forumgratuit.ro/t11-cuibul-acvilei-de-munte-nr-1-the-nest-of-the-golden-eagle-no-1-aquila-chrysaetos-2026",
       "embeddable": null,
       "streamStatus": "unknown"
     }
