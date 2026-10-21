@@ -1925,6 +1925,24 @@
       "lng": -0.12,
       "precision": "region",
       "timezone": "Europe/London"
+    },
+    {
+      "id": "us-indiana-indianapolis-barred-owl-region",
+      "nameNative": "WBU / Cornell Barred Owl Nest — Indianapolis Region",
+      "nameJa": "Wild Birds Unlimited／Cornell・インディアナポリス周辺（地域代表点）",
+      "nameEn": "Wild Birds Unlimited / Cornell Barred Owl — Indianapolis Area",
+      "countryCode": "US",
+      "regionNative": "Indiana",
+      "regionJa": "インディアナ州",
+      "regionEn": "Indiana",
+      "cityNative": "Indianapolis area",
+      "cityJa": "インディアナポリス周辺",
+      "cityEn": "Indianapolis area",
+      "environmentType": "wild",
+      "lat": 39.77,
+      "lng": -86.16,
+      "precision": "region",
+      "timezone": "America/Indiana/Indianapolis"
     }
   ],
   "cameras": [
@@ -4355,6 +4373,36 @@
       "scheduleType": "intermittent",
       "focus": "habitat",
       "officialUrl": "https://www.youtube.com/watch?v=5kDmRpfRlgI",
+      "embeddable": null,
+      "streamStatus": "unknown"
+    },
+    {
+      "id": "cornell-wbu-barred-owl-nest-2026",
+      "locationId": "us-indiana-indianapolis-barred-owl-region",
+      "nameNative": "WBU Barred Owl Cam — Nest Box View",
+      "nameJa": "Wild Birds Unlimited・アメリカフクロウ巣箱内カメラ",
+      "nameEn": "WBU Barred Owl Nest Box Cam",
+      "animalJa": "アメリカフクロウ",
+      "animalEn": "Barred Owl",
+      "videoId": "NwUMHCQb_f8",
+      "scheduleType": "seasonal",
+      "focus": "nest",
+      "officialUrl": "https://www.allaboutbirds.org/cams/barred-owls/",
+      "embeddable": null,
+      "streamStatus": "unknown"
+    },
+    {
+      "id": "cornell-wbu-barred-owl-outside-2026",
+      "locationId": "us-indiana-indianapolis-barred-owl-region",
+      "nameNative": "WBU Barred Owl Cam — Outside View",
+      "nameJa": "Wild Birds Unlimited・アメリカフクロウ巣箱外カメラ",
+      "nameEn": "WBU Barred Owl Outside Cam",
+      "animalJa": "アメリカフクロウ",
+      "animalEn": "Barred Owl",
+      "videoId": "o38Wsaun8N0",
+      "scheduleType": "seasonal",
+      "focus": "nest",
+      "officialUrl": "https://www.allaboutbirds.org/cams/barred-owls/",
       "embeddable": null,
       "streamStatus": "unknown"
     }
